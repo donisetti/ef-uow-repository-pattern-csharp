@@ -1,5 +1,4 @@
 ﻿using KV.RepositoryPattern.Infrastructure;
-using System;
 using System.Data.Entity;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,7 +52,7 @@ namespace KV.RepositoryPattern.DataContext
         /// <returns>The number of objects written to the underlying database.</returns>
         public override int SaveChanges()
         {
-            //SyncObjectsStatePreCommit();
+            SyncObjectsStatePreCommit();
             var changes = base.SaveChanges();
             SyncObjectsStatePostCommit();
             return changes;
