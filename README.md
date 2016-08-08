@@ -19,6 +19,4 @@
 - Testar todos os métodos do Repository
 - Incluir exemplo para todos os métodos do Repository
 
-
-
 Repositório Original: https://genericunitofworkandrepositories.codeplex.com/Wikipage?ProjectName=genericunitofworkandrepositories
