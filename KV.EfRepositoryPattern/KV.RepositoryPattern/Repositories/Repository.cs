@@ -27,13 +27,13 @@ namespace KV.RepositoryPattern.Repositories
         {
             _context = context;
             _unitOfWork = unitOfWork;
-            
+
             var dbContext = context as DbContext;
 
             if (dbContext != null)
             {
                 _dbSet = dbContext.Set<TEntity>();
-            }           
+            }
         }
 
         public virtual TEntity Find(params object[] keyValues)
@@ -49,8 +49,8 @@ namespace KV.RepositoryPattern.Repositories
         public virtual void Insert(TEntity entity)
         {
             entity.ObjectState = ObjectState.Added;
-            _dbSet.Attach(entity);
-            _context.SyncObjectState(entity);
+            _dbSet.Add(entity);
+            _unitOfWork.SaveChanges();
         }
 
         public virtual void InsertRange(IEnumerable<TEntity> entities)
@@ -70,7 +70,7 @@ namespace KV.RepositoryPattern.Repositories
         {
             entity.ObjectState = ObjectState.Modified;
             _dbSet.Attach(entity);
-            _context.SyncObjectState(entity);
+            _unitOfWork.SaveChanges();
         }
 
         public virtual void Delete(object id)
@@ -83,7 +83,36 @@ namespace KV.RepositoryPattern.Repositories
         {
             entity.ObjectState = ObjectState.Deleted;
             _dbSet.Attach(entity);
-            _context.SyncObjectState(entity);
+            _unitOfWork.SaveChanges();
+        }
+
+        public virtual async Task<bool> DeleteAsync(params object[] keyValues)
+        {
+            return await DeleteAsync(CancellationToken.None, keyValues);
+        }
+
+        public virtual async Task<bool> DeleteAsync(CancellationToken cancellationToken, params object[] keyValues)
+        {
+            var entity = await FindAsync(cancellationToken, keyValues);
+
+            if (entity == null)
+            {
+                return false;
+            }
+
+            entity.ObjectState = ObjectState.Deleted;
+            _dbSet.Attach(entity);
+            _unitOfWork.SaveChanges();
+
+            return true;
+        }
+
+        public virtual void InsertOrUpdateGraph(TEntity entity)
+        {
+            SyncObjectGraph(entity);
+            _entitesChecked = null;
+            _dbSet.Attach(entity);
+            _unitOfWork.SaveChanges();
         }
 
         public IQueryFluent<TEntity> Query()
@@ -120,27 +149,7 @@ namespace KV.RepositoryPattern.Repositories
         {
             return await _dbSet.FindAsync(cancellationToken, keyValues);
         }
-
-        public virtual async Task<bool> DeleteAsync(params object[] keyValues)
-        {
-            return await DeleteAsync(CancellationToken.None, keyValues);
-        }
-
-        public virtual async Task<bool> DeleteAsync(CancellationToken cancellationToken, params object[] keyValues)
-        {
-            var entity = await FindAsync(cancellationToken, keyValues);
-
-            if (entity == null)
-            {
-                return false;
-            }
-
-            entity.ObjectState = ObjectState.Deleted;
-            _dbSet.Attach(entity);
-
-            return true;
-        }
-
+        
         internal IQueryable<TEntity> Select(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
@@ -177,13 +186,6 @@ namespace KV.RepositoryPattern.Repositories
             int? pageSize = null)
         {
             return await Select(filter, orderBy, includes, page, pageSize).ToListAsync();
-        }
-
-        public virtual void InsertOrUpdateGraph(TEntity entity)
-        {
-            SyncObjectGraph(entity);
-            _entitesChecked = null;
-            _dbSet.Attach(entity);
         }
 
         HashSet<object> _entitesChecked; // tracking of all process entities in the object graph when calling SyncObjectGraph
