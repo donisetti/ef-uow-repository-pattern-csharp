@@ -12,3 +12,6 @@
  - Unit Of Work Pattern
  - Repository Pattern
  - Service Pattern
+
+
+Repositório Original: https://genericunitofworkandrepositories.codeplex.com/Wikipage?ProjectName=genericunitofworkandrepositories
