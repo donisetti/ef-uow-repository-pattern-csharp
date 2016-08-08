@@ -1,4 +1,4 @@
-# Entity Framework 6x - Repository Pattern
+# Entity Framework 6x - Unit Of Work e Repository Pattern
 
 **Tecnologias utilizadas**
 
