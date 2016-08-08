@@ -17,7 +17,7 @@
 **Próximas features**
 
 - Testar todos os métodos do Repository
-- Incluir exemplo para todos os métodos
+- Incluir exemplo para todos os métodos do Repository
 
 
 
