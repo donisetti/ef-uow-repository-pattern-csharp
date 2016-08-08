@@ -12,6 +12,13 @@
  - Unit Of Work Pattern
  - Repository Pattern
  - Service Pattern
+ 
+
+**Próximas features**
+
+- Testar todos os métodos do Repository
+- Incluir exemplo para todos os métodos
+
 
 
 Repositório Original: https://genericunitofworkandrepositories.codeplex.com/Wikipage?ProjectName=genericunitofworkandrepositories
