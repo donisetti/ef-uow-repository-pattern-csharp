@@ -1,5 +1,4 @@
-﻿using KV.RepositoryPattern.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KV.RepositoryPattern.Repositories
 {
-    public sealed class QueryFluent<TEntity> : IQueryFluent<TEntity> where TEntity : class, IObjectState
+    public sealed class QueryFluent<TEntity> : IQueryFluent<TEntity> where TEntity : class
     {
         #region Private Fields
         private readonly Expression<Func<TEntity, bool>> _expression;

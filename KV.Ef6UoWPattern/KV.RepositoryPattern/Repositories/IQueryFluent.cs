@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using KV.RepositoryPattern.Infrastructure;
 
 namespace KV.RepositoryPattern.Repositories
 {
-    public interface IQueryFluent<TEntity> where TEntity : IObjectState
+    public interface IQueryFluent<TEntity> where TEntity : class
     {
         IQueryFluent<TEntity> OrderBy(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy);
         IQueryFluent<TEntity> Include(Expression<Func<TEntity, object>> expression);

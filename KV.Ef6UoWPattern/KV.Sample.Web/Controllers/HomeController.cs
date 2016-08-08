@@ -14,18 +14,18 @@ namespace KV.Sample.Web.Controllers
         }
 
         public ActionResult Index()
-        {   
-            //Teacher teacher = new Teacher();            
-            //teacher.Name = "Professor Três";
+        {
+            Teacher teacher = new Teacher();
+            teacher.Name = "Professor Três";
 
-            //Teacher teacher2 = new Teacher();            
-            //teacher2.Name = "Professor Quatro";
+            Teacher teacher2 = new Teacher();
+            teacher2.Name = "Professor Quatro";
 
             Course course1 = new Course();
             course1.Number = "Curso da vida";
             course1.Description = "Aprender um poquinho que a vida não é um toddynho";
-            //course1.TeacherList.Add(teacher);
-            //course1.TeacherList.Add(teacher2);
+            course1.TeacherList.Add(teacher);
+            course1.TeacherList.Add(teacher2);
 
             courseService.Insert(course1);
 

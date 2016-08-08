@@ -1,5 +1,4 @@
-﻿using KV.RepositoryPattern.Infrastructure;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -51,10 +50,8 @@ namespace KV.RepositoryPattern.DataContext
         /// <seealso cref="DbContext.SaveChanges"/>
         /// <returns>The number of objects written to the underlying database.</returns>
         public override int SaveChanges()
-        {
-            SyncObjectsStatePreCommit();
-            var changes = base.SaveChanges();
-            SyncObjectsStatePostCommit();
+        {   
+            var changes = base.SaveChanges();            
             return changes;
         }
 
@@ -109,32 +106,10 @@ namespace KV.RepositoryPattern.DataContext
         ///     <see cref="Task.Result">Task.Result</see> contains the number of 
         ///     objects written to the underlying database.</returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            SyncObjectsStatePreCommit();
+        {            
             var changesAsync = await base.SaveChangesAsync(cancellationToken);
-            SyncObjectsStatePostCommit();
+            
             return changesAsync;
-        }
-
-        public void SyncObjectState<TEntity>(TEntity entity) where TEntity : class, IObjectState
-        {
-            Entry(entity).State = StateHelper.ConvertState(entity.ObjectState);
-        }
-
-        private void SyncObjectsStatePreCommit()
-        {
-            foreach (var dbEntityEntry in ChangeTracker.Entries())
-            {
-                dbEntityEntry.State = StateHelper.ConvertState(((IObjectState)dbEntityEntry.Entity).ObjectState);
-            }
-        }
-
-        public void SyncObjectsStatePostCommit()
-        {
-            foreach (var dbEntityEntry in ChangeTracker.Entries())
-            {
-                ((IObjectState)dbEntityEntry.Entity).ObjectState = StateHelper.ConvertState(dbEntityEntry.State);
-            }
         }
 
         protected override void Dispose(bool disposing)

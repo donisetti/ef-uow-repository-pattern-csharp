@@ -1,10 +1,9 @@
-﻿using KV.RepositoryPattern.Entity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace KV.Sample.Domain
 {
-    public class Course : Entity
+    public class Course
     {
         public Course()
         {

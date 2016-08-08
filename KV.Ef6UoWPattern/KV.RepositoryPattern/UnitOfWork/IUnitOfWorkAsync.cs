@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using KV.RepositoryPattern.Infrastructure;
+
 using KV.RepositoryPattern.Repositories;
 
 namespace KV.RepositoryPattern.UnitOfWork
@@ -9,6 +9,6 @@ namespace KV.RepositoryPattern.UnitOfWork
     {
         Task<int> SaveChangesAsync();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-        IRepositoryAsync<TEntity> RepositoryAsync<TEntity>() where TEntity : class, IObjectState;
+        IRepositoryAsync<TEntity> RepositoryAsync<TEntity>() where TEntity : class;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using KV.RepositoryPattern.DataContext;
-using KV.RepositoryPattern.Infrastructure;
 using KV.RepositoryPattern.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -9,11 +8,10 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using LinqKit;
-using System.Diagnostics;
 
 namespace KV.RepositoryPattern.Repositories
 {
-    public class Repository<TEntity> : IRepositoryAsync<TEntity> where TEntity : class, IObjectState
+    public class Repository<TEntity> : IRepositoryAsync<TEntity> where TEntity : class
     {
         #region Private Fields
 
@@ -48,7 +46,7 @@ namespace KV.RepositoryPattern.Repositories
 
         public virtual void Insert(TEntity entity)
         {
-            entity.ObjectState = ObjectState.Added;
+            //entity.ObjectState = ObjectState.Added;
             _dbSet.Add(entity);
             _unitOfWork.SaveChanges();
         }
@@ -67,8 +65,7 @@ namespace KV.RepositoryPattern.Repositories
         }
 
         public virtual void Update(TEntity entity)
-        {
-            entity.ObjectState = ObjectState.Modified;
+        {   
             _dbSet.Attach(entity);
             _unitOfWork.SaveChanges();
         }
@@ -80,8 +77,7 @@ namespace KV.RepositoryPattern.Repositories
         }
 
         public virtual void Delete(TEntity entity)
-        {
-            entity.ObjectState = ObjectState.Deleted;
+        {            
             _dbSet.Attach(entity);
             _unitOfWork.SaveChanges();
         }
@@ -99,8 +95,7 @@ namespace KV.RepositoryPattern.Repositories
             {
                 return false;
             }
-
-            entity.ObjectState = ObjectState.Deleted;
+            
             _dbSet.Attach(entity);
             _unitOfWork.SaveChanges();
 
@@ -108,9 +103,7 @@ namespace KV.RepositoryPattern.Repositories
         }
 
         public virtual void InsertOrUpdateGraph(TEntity entity)
-        {
-            SyncObjectGraph(entity);
-            _entitesChecked = null;
+        {   
             _dbSet.Attach(entity);
             _unitOfWork.SaveChanges();
         }
@@ -135,7 +128,7 @@ namespace KV.RepositoryPattern.Repositories
             return _dbSet;
         }
 
-        public IRepository<T> GetRepository<T>() where T : class, IObjectState
+        public IRepository<T> GetRepository<T>() where T : class
         {
             return _unitOfWork.Repository<T>();
         }
@@ -186,47 +179,6 @@ namespace KV.RepositoryPattern.Repositories
             int? pageSize = null)
         {
             return await Select(filter, orderBy, includes, page, pageSize).ToListAsync();
-        }
-
-        HashSet<object> _entitesChecked; // tracking of all process entities in the object graph when calling SyncObjectGraph
-
-        private void SyncObjectGraph(object entity) // scan object graph for all 
-        {
-            if (_entitesChecked == null)
-                _entitesChecked = new HashSet<object>();
-
-            if (_entitesChecked.Contains(entity))
-                return;
-
-            _entitesChecked.Add(entity);
-
-            var objectState = entity as IObjectState;
-
-            if (objectState != null && objectState.ObjectState == ObjectState.Added)
-                _context.SyncObjectState((IObjectState)entity);
-
-            // Set tracking state for child collections
-            foreach (var prop in entity.GetType().GetProperties())
-            {
-                // Apply changes to 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(entity, null) as IObjectState;
-                if (trackableRef != null)
-                {
-                    if (trackableRef.ObjectState == ObjectState.Added)
-                        _context.SyncObjectState((IObjectState)entity);
-
-                    SyncObjectGraph(prop.GetValue(entity, null));
-                }
-
-                // Apply changes to 1-M properties
-                var items = prop.GetValue(entity, null) as IEnumerable<IObjectState>;
-                if (items == null) continue;
-
-                Debug.WriteLine("Checking collection: " + prop.Name);
-
-                foreach (var item in items)
-                    SyncObjectGraph(item);
-            }
         }
     }
 }

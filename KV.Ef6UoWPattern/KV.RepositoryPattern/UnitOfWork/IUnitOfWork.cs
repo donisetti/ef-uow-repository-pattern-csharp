@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using KV.RepositoryPattern.Infrastructure;
 using KV.RepositoryPattern.Repositories;
 
 namespace KV.RepositoryPattern.UnitOfWork
@@ -9,7 +8,7 @@ namespace KV.RepositoryPattern.UnitOfWork
     {
         int SaveChanges();
         void Dispose(bool disposing);
-        IRepository<TEntity> Repository<TEntity>() where TEntity : class, IObjectState;
+        IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified);
         bool Commit();
         void Rollback();

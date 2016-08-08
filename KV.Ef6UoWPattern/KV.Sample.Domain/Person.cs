@@ -1,8 +1,6 @@
-﻿using KV.RepositoryPattern.Entity;
-
-namespace KV.Sample.Domain
+﻿namespace KV.Sample.Domain
 {
-    public class Person : Entity
+    public class Person
     {
         public string Name { get; set; }
     }

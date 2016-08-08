@@ -1,5 +1,4 @@
-﻿using KV.RepositoryPattern.Infrastructure;
-using KV.RepositoryPattern.Repositories;
+﻿using KV.RepositoryPattern.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KV.ServicePattern
 {
-    public interface IService<TEntity> where TEntity : IObjectState
+    public interface IService<TEntity> where TEntity : class
     {
         TEntity Find(params object[] keyValues);
         IQueryable<TEntity> SelectQuery(string query, params object[] parameters);

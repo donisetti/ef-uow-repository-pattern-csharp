@@ -8,7 +8,6 @@ using System.Data.Entity.Core.Objects;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
-using KV.RepositoryPattern.Infrastructure;
 using System.Data.Entity.Infrastructure;
 
 namespace KV.RepositoryPattern.UnitOfWork
@@ -81,7 +80,7 @@ namespace KV.RepositoryPattern.UnitOfWork
             return _dataContext.SaveChanges();
         }
 
-        public IRepository<TEntity> Repository<TEntity>() where TEntity : class, IObjectState
+        public IRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
             if (ServiceLocator.IsLocationProviderSet)
             {
@@ -101,7 +100,7 @@ namespace KV.RepositoryPattern.UnitOfWork
             return _dataContext.SaveChangesAsync(cancellationToken);
         }
 
-        public IRepositoryAsync<TEntity> RepositoryAsync<TEntity>() where TEntity : class, IObjectState
+        public IRepositoryAsync<TEntity> RepositoryAsync<TEntity>() where TEntity : class
         {
             if (ServiceLocator.IsLocationProviderSet)
             {
@@ -148,8 +147,7 @@ namespace KV.RepositoryPattern.UnitOfWork
 
         public void Rollback()
         {
-            _transaction.Rollback();
-            _dataContext.SyncObjectsStatePostCommit();
+            _transaction.Rollback();            
         }
 
         #endregion

@@ -1,5 +1,4 @@
-﻿using KV.RepositoryPattern.Infrastructure;
-using KV.RepositoryPattern.Repositories;
+﻿using KV.RepositoryPattern.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KV.ServicePattern
 {
-    public abstract class Service<TEntity> : IService<TEntity> where TEntity : class, IObjectState
+    public abstract class Service<TEntity> : IService<TEntity> where TEntity : class
     {
         #region Private Fields
         private readonly IRepositoryAsync<TEntity> _repository;

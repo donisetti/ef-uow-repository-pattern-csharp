@@ -1,9 +1,8 @@
-﻿using KV.RepositoryPattern.Entity;
-using System;
+﻿using System;
 
 namespace KV.Sample.Domain
 {
-    public class User : Entity
+    public class User
     {
         public Guid UserId { get; set; }
         public string Mail { get; set; }
