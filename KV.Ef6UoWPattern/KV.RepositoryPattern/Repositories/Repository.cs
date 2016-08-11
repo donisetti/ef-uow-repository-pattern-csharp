@@ -34,19 +34,8 @@ namespace KV.RepositoryPattern.Repositories
             }
         }
 
-        public virtual TEntity Find(params object[] keyValues)
-        {
-            return _dbSet.Find(keyValues);
-        }
-
-        public virtual IQueryable<TEntity> SelectQuery(string query, params object[] parameters)
-        {
-            return _dbSet.SqlQuery(query, parameters).AsQueryable();
-        }
-
         public virtual void Insert(TEntity entity)
         {
-            //entity.ObjectState = ObjectState.Added;
             _dbSet.Add(entity);
             _unitOfWork.SaveChanges();
         }
@@ -64,9 +53,15 @@ namespace KV.RepositoryPattern.Repositories
             _dbSet.AddRange(entities);
         }
 
-        public virtual void Update(TEntity entity)
-        {   
+        public virtual void InsertOrUpdateGraph(TEntity entity)
+        {
             _dbSet.Attach(entity);
+            _unitOfWork.SaveChanges();
+        }
+
+        public virtual void Update(TEntity entity)
+        {
+            _context.UpdateObjectState<TEntity>(entity, EntityState.Modified);
             _unitOfWork.SaveChanges();
         }
 
@@ -77,8 +72,8 @@ namespace KV.RepositoryPattern.Repositories
         }
 
         public virtual void Delete(TEntity entity)
-        {            
-            _dbSet.Attach(entity);
+        {
+            _dbSet.Remove(entity);
             _unitOfWork.SaveChanges();
         }
 
@@ -95,17 +90,11 @@ namespace KV.RepositoryPattern.Repositories
             {
                 return false;
             }
-            
+
             _dbSet.Attach(entity);
             _unitOfWork.SaveChanges();
 
             return true;
-        }
-
-        public virtual void InsertOrUpdateGraph(TEntity entity)
-        {   
-            _dbSet.Attach(entity);
-            _unitOfWork.SaveChanges();
         }
 
         public IQueryFluent<TEntity> Query()
@@ -128,9 +117,14 @@ namespace KV.RepositoryPattern.Repositories
             return _dbSet;
         }
 
-        public IRepository<T> GetRepository<T>() where T : class
+        public virtual TEntity Find(params object[] keyValues)
         {
-            return _unitOfWork.Repository<T>();
+            return _dbSet.Find(keyValues);
+        }
+
+        public virtual IQueryable<TEntity> SelectQuery(string query, params object[] parameters)
+        {
+            return _dbSet.SqlQuery(query, parameters).AsQueryable();
         }
 
         public virtual async Task<TEntity> FindAsync(params object[] keyValues)
@@ -142,7 +136,7 @@ namespace KV.RepositoryPattern.Repositories
         {
             return await _dbSet.FindAsync(cancellationToken, keyValues);
         }
-        
+
         internal IQueryable<TEntity> Select(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
@@ -179,6 +173,11 @@ namespace KV.RepositoryPattern.Repositories
             int? pageSize = null)
         {
             return await Select(filter, orderBy, includes, page, pageSize).ToListAsync();
+        }
+
+        public IRepository<T> GetRepository<T>() where T : class
+        {
+            return _unitOfWork.Repository<T>();
         }
     }
 }

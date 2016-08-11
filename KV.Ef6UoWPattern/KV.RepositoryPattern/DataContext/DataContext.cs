@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -110,6 +111,11 @@ namespace KV.RepositoryPattern.DataContext
             var changesAsync = await base.SaveChangesAsync(cancellationToken);
             
             return changesAsync;
+        }
+
+        public void UpdateObjectState<TEntity>(TEntity entity, EntityState entityState) where TEntity : class
+        {
+            Entry(entity).State = entityState;
         }
 
         protected override void Dispose(bool disposing)

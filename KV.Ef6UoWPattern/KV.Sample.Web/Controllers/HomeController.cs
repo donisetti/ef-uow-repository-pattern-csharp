@@ -1,6 +1,8 @@
 ﻿using KV.Sample.Domain;
 using KV.Sample.Service.Interfaces;
+using System;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace KV.Sample.Web.Controllers
 {
@@ -15,19 +17,27 @@ namespace KV.Sample.Web.Controllers
 
         public ActionResult Index()
         {
-            Teacher teacher = new Teacher();
-            teacher.Name = "Professor Três";
+            //Teacher teacher = new Teacher();
+            //teacher.Name = "Professor Três";
 
-            Teacher teacher2 = new Teacher();
-            teacher2.Name = "Professor Quatro";
+            //Teacher teacher2 = new Teacher();
+            //teacher2.Name = "Professor Quatro";
 
-            Course course1 = new Course();
-            course1.Number = "Curso da vida";
-            course1.Description = "Aprender um poquinho que a vida não é um toddynho";
-            course1.TeacherList.Add(teacher);
-            course1.TeacherList.Add(teacher2);
+            //Course course1 = new Course();
+            //course1.Number = "Curso da vida 3";
+            //course1.Description = "Aprender um poquinho que a vida não é um toddynho, não é mesmo!";
+            //course1.TeacherList.Add(teacher);
+            //course1.TeacherList.Add(teacher2);
 
-            courseService.Insert(course1);
+            //courseService.Insert(course1);
+
+            //courseService.Delete(new Guid("f6dac3c7-6b5f-e611-bc1e-18037364e507"));
+
+            var course = courseService.Query(x => x.Description == "Programming in HTML5 with JavaScript and CSS3").Select().FirstOrDefault();
+
+            course.Description = "TESTE UPDATE";
+
+            courseService.Update(course);
 
             return View();
         }
