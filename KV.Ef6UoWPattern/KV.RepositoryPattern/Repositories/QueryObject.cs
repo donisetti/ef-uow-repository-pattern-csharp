@@ -6,21 +6,21 @@ namespace KV.RepositoryPattern.Repositories
 {
     public abstract class QueryObject<TEntity> : IQueryObject<TEntity>
     {
-        private Expression<Func<TEntity, bool>> _query;
+        private Expression<Func<TEntity, bool>> query;
 
         public virtual Expression<Func<TEntity, bool>> Query()
         {
-            return _query;
+            return query;
         }
 
         public Expression<Func<TEntity, bool>> And(Expression<Func<TEntity, bool>> query)
         {
-            return _query = _query == null ? query : _query.And(query.Expand());
+            return this.query = this.query == null ? query : this.query.And(query.Expand());
         }
 
         public Expression<Func<TEntity, bool>> Or(Expression<Func<TEntity, bool>> query)
         {
-            return _query = _query == null ? query : _query.Or(query.Expand());
+            return this.query = this.query == null ? query : this.query.Or(query.Expand());
         }
 
         public Expression<Func<TEntity, bool>> And(IQueryObject<TEntity> queryObject)

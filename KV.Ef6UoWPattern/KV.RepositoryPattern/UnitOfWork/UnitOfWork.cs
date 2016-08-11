@@ -16,11 +16,11 @@ namespace KV.RepositoryPattern.UnitOfWork
     {
         #region Private Fields
 
-        private IDataContextAsync _dataContext;
-        private bool _disposed;
-        private ObjectContext _objectContext;
-        private DbTransaction _transaction;
-        private Dictionary<string, dynamic> _repositories;
+        private IDataContextAsync dataContext;
+        private bool disposed;
+        private ObjectContext objectContext;
+        private DbTransaction transaction;
+        private Dictionary<string, dynamic> repositories;
 
         #endregion Private Fields
 
@@ -28,8 +28,8 @@ namespace KV.RepositoryPattern.UnitOfWork
 
         public UnitOfWork(IDataContextAsync dataContext)
         {
-            _dataContext = dataContext;
-            _repositories = new Dictionary<string, dynamic>();
+            this.dataContext = dataContext;
+            repositories = new Dictionary<string, dynamic>();
         }
 
         public void Dispose()
@@ -40,7 +40,7 @@ namespace KV.RepositoryPattern.UnitOfWork
 
         public virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (disposed)
                 return;
 
             if (disposing)
@@ -50,9 +50,9 @@ namespace KV.RepositoryPattern.UnitOfWork
 
                 try
                 {
-                    if (_objectContext != null && _objectContext.Connection.State == ConnectionState.Open)
+                    if (objectContext != null && objectContext.Connection.State == ConnectionState.Open)
                     {
-                        _objectContext.Connection.Close();
+                        objectContext.Connection.Close();
                     }
                 }
                 catch (ObjectDisposedException)
@@ -60,24 +60,24 @@ namespace KV.RepositoryPattern.UnitOfWork
                     // do nothing, the objectContext has already been disposed
                 }
 
-                if (_dataContext != null)
+                if (dataContext != null)
                 {
-                    _dataContext.Dispose();
-                    _dataContext = null;
+                    dataContext.Dispose();
+                    dataContext = null;
                 }
             }
 
             // release any unmanaged objects
             // set the object references to null
 
-            _disposed = true;
+            disposed = true;
         }
 
         #endregion Constuctor/Dispose
 
         public int SaveChanges()
         {
-            return _dataContext.SaveChanges();
+            return dataContext.SaveChanges();
         }
 
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class
@@ -92,12 +92,12 @@ namespace KV.RepositoryPattern.UnitOfWork
 
         public Task<int> SaveChangesAsync()
         {
-            return _dataContext.SaveChangesAsync();
+            return dataContext.SaveChangesAsync();
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return _dataContext.SaveChangesAsync(cancellationToken);
+            return dataContext.SaveChangesAsync(cancellationToken);
         }
 
         public IRepositoryAsync<TEntity> RepositoryAsync<TEntity>() where TEntity : class
@@ -107,47 +107,47 @@ namespace KV.RepositoryPattern.UnitOfWork
                 return ServiceLocator.Current.GetInstance<IRepositoryAsync<TEntity>>();
             }
 
-            if (_repositories == null)
+            if (repositories == null)
             {
-                _repositories = new Dictionary<string, dynamic>();
+                repositories = new Dictionary<string, dynamic>();
             }
 
             var type = typeof(TEntity).Name;
 
-            if (_repositories.ContainsKey(type))
+            if (repositories.ContainsKey(type))
             {
-                return (IRepositoryAsync<TEntity>)_repositories[type];
+                return (IRepositoryAsync<TEntity>)repositories[type];
             }
 
             var repositoryType = typeof(Repository<>);
 
-            _repositories.Add(type, Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _dataContext, this));
+            repositories.Add(type, Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), dataContext, this));
 
-            return _repositories[type];
+            return repositories[type];
         }
 
         #region Unit of Work Transactions
 
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified)
         {
-            _objectContext = ((IObjectContextAdapter)_dataContext).ObjectContext;
-            if (_objectContext.Connection.State != ConnectionState.Open)
+            objectContext = ((IObjectContextAdapter)dataContext).ObjectContext;
+            if (objectContext.Connection.State != ConnectionState.Open)
             {
-                _objectContext.Connection.Open();
+                objectContext.Connection.Open();
             }
 
-            _transaction = _objectContext.Connection.BeginTransaction(isolationLevel);
+            transaction = objectContext.Connection.BeginTransaction(isolationLevel);
         }
 
         public bool Commit()
         {
-            _transaction.Commit();
+            transaction.Commit();
             return true;
         }
 
         public void Rollback()
         {
-            _transaction.Rollback();            
+            transaction.Rollback();            
         }
 
         #endregion

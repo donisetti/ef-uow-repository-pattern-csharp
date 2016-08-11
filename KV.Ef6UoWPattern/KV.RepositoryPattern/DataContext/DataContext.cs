@@ -9,7 +9,7 @@ namespace KV.RepositoryPattern.DataContext
     public class DataContext : DbContext, IDataContextAsync
     {
         #region Private Fields        
-        bool _disposed;
+        bool disposed;
         #endregion Private Fields
 
         public DataContext(string nameOrConnectionString) : base(nameOrConnectionString)
@@ -120,7 +120,7 @@ namespace KV.RepositoryPattern.DataContext
 
         protected override void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
@@ -131,7 +131,7 @@ namespace KV.RepositoryPattern.DataContext
                 // release any unmanaged objects
                 // set object references to null
 
-                _disposed = true;
+                disposed = true;
             }
 
             base.Dispose(disposing);

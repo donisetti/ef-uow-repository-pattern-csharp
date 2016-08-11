@@ -15,29 +15,29 @@ namespace KV.RepositoryPattern.Repositories
     {
         #region Private Fields
 
-        private readonly IDataContextAsync _context;
-        private readonly DbSet<TEntity> _dbSet;
-        private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IDataContextAsync context;
+        private readonly DbSet<TEntity> dbSet;
+        private readonly IUnitOfWorkAsync unitOfWork;
 
         #endregion Private Fields
 
         public Repository(IDataContextAsync context, IUnitOfWorkAsync unitOfWork)
         {
-            _context = context;
-            _unitOfWork = unitOfWork;
+            this.context = context;
+            this.unitOfWork = unitOfWork;
 
             var dbContext = context as DbContext;
 
             if (dbContext != null)
             {
-                _dbSet = dbContext.Set<TEntity>();
+                dbSet = dbContext.Set<TEntity>();
             }
         }
 
         public virtual void Insert(TEntity entity)
         {
-            _dbSet.Add(entity);
-            _unitOfWork.SaveChanges();
+            dbSet.Add(entity);
+            unitOfWork.SaveChanges();
         }
 
         public virtual void InsertRange(IEnumerable<TEntity> entities)
@@ -50,31 +50,31 @@ namespace KV.RepositoryPattern.Repositories
 
         public virtual void InsertGraphRange(IEnumerable<TEntity> entities)
         {
-            _dbSet.AddRange(entities);
+            dbSet.AddRange(entities);
         }
 
         public virtual void InsertOrUpdateGraph(TEntity entity)
         {
-            _dbSet.Attach(entity);
-            _unitOfWork.SaveChanges();
+            dbSet.Attach(entity);
+            unitOfWork.SaveChanges();
         }
 
         public virtual void Update(TEntity entity)
         {
-            _context.UpdateObjectState<TEntity>(entity, EntityState.Modified);
-            _unitOfWork.SaveChanges();
+            context.UpdateObjectState<TEntity>(entity, EntityState.Modified);
+            unitOfWork.SaveChanges();
         }
 
         public virtual void Delete(object id)
         {
-            var entity = _dbSet.Find(id);
+            var entity = dbSet.Find(id);
             Delete(entity);
         }
 
         public virtual void Delete(TEntity entity)
         {
-            _dbSet.Remove(entity);
-            _unitOfWork.SaveChanges();
+            dbSet.Remove(entity);
+            unitOfWork.SaveChanges();
         }
 
         public virtual async Task<bool> DeleteAsync(params object[] keyValues)
@@ -91,8 +91,8 @@ namespace KV.RepositoryPattern.Repositories
                 return false;
             }
 
-            _dbSet.Attach(entity);
-            _unitOfWork.SaveChanges();
+            dbSet.Attach(entity);
+            unitOfWork.SaveChanges();
 
             return true;
         }
@@ -114,27 +114,27 @@ namespace KV.RepositoryPattern.Repositories
 
         public IQueryable<TEntity> Queryable()
         {
-            return _dbSet;
+            return dbSet;
         }
 
         public virtual TEntity Find(params object[] keyValues)
         {
-            return _dbSet.Find(keyValues);
+            return dbSet.Find(keyValues);
         }
 
         public virtual IQueryable<TEntity> SelectQuery(string query, params object[] parameters)
         {
-            return _dbSet.SqlQuery(query, parameters).AsQueryable();
+            return dbSet.SqlQuery(query, parameters).AsQueryable();
         }
 
         public virtual async Task<TEntity> FindAsync(params object[] keyValues)
         {
-            return await _dbSet.FindAsync(keyValues);
+            return await dbSet.FindAsync(keyValues);
         }
 
         public virtual async Task<TEntity> FindAsync(CancellationToken cancellationToken, params object[] keyValues)
         {
-            return await _dbSet.FindAsync(cancellationToken, keyValues);
+            return await dbSet.FindAsync(cancellationToken, keyValues);
         }
 
         internal IQueryable<TEntity> Select(
@@ -144,7 +144,7 @@ namespace KV.RepositoryPattern.Repositories
             int? page = null,
             int? pageSize = null)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = dbSet;
 
             if (includes != null)
             {
@@ -177,7 +177,7 @@ namespace KV.RepositoryPattern.Repositories
 
         public IRepository<T> GetRepository<T>() where T : class
         {
-            return _unitOfWork.Repository<T>();
+            return unitOfWork.Repository<T>();
         }
     }
 }
