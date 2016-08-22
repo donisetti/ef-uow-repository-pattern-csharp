@@ -2,20 +2,23 @@
 
 Unit Of Work and Repository Pattern
 
-**Technologies**
+Technologies
+------------
 
  - ASP.NET MVC 5
  - AutoFac - IoC 
  - Entity Framework 6x 
  - SQL Server
 
-**Patterns**
+Patterns
+--------
 
  - Unit Of Work Pattern
  - Repository Pattern
  - Service Pattern
  
-**Next features**
+Next features
+-------------
 
 - Test all methods Repository
 - Include example for all methods of repository
