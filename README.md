@@ -3,7 +3,7 @@ ef-uow-repository-pattern-csharp
 
 Unit Of Work and Repository Pattern
 
-*Technologies**
+**Technologies**
 
  - ASP.NET MVC 5
  - AutoFac - IoC 
