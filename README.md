@@ -1,22 +1,24 @@
-#Unit Of Work e Repository Pattern
+ef-uow-repository-pattern-csharp
+--------------------------------
 
-**Tecnologias utilizadas**
+Unit Of Work and Repository Pattern
+
+*Technologies**
 
  - ASP.NET MVC 5
  - AutoFac - IoC 
  - Entity Framework 6x 
  - SQL Server
 
-**Patterns Aplicados**
+**Patterns**
 
  - Unit Of Work Pattern
  - Repository Pattern
  - Service Pattern
  
+**Next features**
 
-**Próximas features**
+- Test all methods Repository
+- Include example for all methods of repository
 
-- Testar todos os métodos do Repository
-- Incluir exemplo para todos os métodos do Repository
-
-Repositório Original: https://genericunitofworkandrepositories.codeplex.com/Wikipage?ProjectName=genericunitofworkandrepositories
+Original repository: https://genericunitofworkandrepositories.codeplex.com/Wikipage?ProjectName=genericunitofworkandrepositories
